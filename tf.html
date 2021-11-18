@@ -372,7 +372,7 @@
 		return hexValue.length==2 ? hexValue : ('0' + hexValue)
 	}
 	
-	const pngFile = 'SourceImage.png';
+	const pngFile = `SourceImage.png?nocache=${new Date().valueOf()}`;
 	function parsePng() {
 		const canvas = document.getElementById('imageContainer');
 		const drawContext = canvas.getContext('2d');
