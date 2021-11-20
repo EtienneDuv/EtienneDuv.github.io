@@ -65,7 +65,7 @@ function constructTable() {
 		for (var j = 0; j < sourceImageInfo.pixels[i].length; j++) {
 			cell = document.createElement('td');
 
-			cell.innerHTML = `${sourceImageInfo.left + j}:${sourceImageInfo.top + i} <span class="color">${img_color[i][j].substring(1)}</span>`;
+			cell.innerHTML = `${sourceImageInfo.left + j}:${sourceImageInfo.top + i} <span class="color">${sourceImageInfo.pixels[i][j].substring(1)}</span>`;
 			cell.style.background = sourceImageInfo.pixels[i][j];
 			if (j % 10 === 0) {
 				cell.classList.add('edge-left');
