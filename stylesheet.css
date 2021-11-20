@@ -1,5 +1,6 @@
 body {
 	position:  relative;
+	width: fit-content;
 }
 
 .loading {
@@ -58,6 +59,7 @@ body {
 	top: 0;
 	left: 50%;
 	height: 120px;
+	transform: translateX(-50%);
 }
 
 
