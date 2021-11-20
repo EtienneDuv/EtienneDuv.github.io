@@ -1,8 +1,5 @@
 // ZeRemz#0434 (édité par ra1nbowpill#7214)
 
-const originRow = document.getElementById('originCoordX');
-const originCol = document.getElementById('originCoordY');
-
 /* ---------- */
 /*    GUI     */
 /* ---------- */
@@ -39,7 +36,7 @@ function getCol(element) {
 
 
 var msg_timer = null;
-function display_copied_msg(x, y) {
+function displayCopiedMsg(x, y) {
 	let msg_div = document.getElementById('copied_msg');
 	msg_div.style.left = x + 'px';
 	msg_div.style.top = y + 'px';
@@ -56,21 +53,21 @@ function display_copied_msg(x, y) {
 
 function copyToClipboard(e) {
 	navigator.clipboard.writeText(e.currentTarget.getElementsByClassName('color')[0].innerText);
-	display_copied_msg(e.x, e.y);
+	displayCopiedMsg(e.x, e.y);
 }
 
-function construct_table(img_color) {
+function constructTable(imageInfo) {
 	const minCol = parseInt(originCol.value), minRow = parseInt(originRow.value);
 	var table = document.getElementById('image_table');
 	table.innerHTML = '';
 	var row = null, cell = null;
-	for (var i = 0; i < img_color.length; i++) {
+	for (var i = 0; i < imageInfo.pixels.length; i++) {
 		row = document.createElement('tr')
-		for (var j = 0; j < img_color[i].length; j++) {
+		for (var j = 0; j < imageInfo.pixels[i].length; j++) {
 			cell = document.createElement('td');
 
-			cell.innerHTML = `${minCol + j}:${minRow + i} <span class="color">${img_color[i][j].substring(1)}</span>`;
-			cell.style.background = img_color[i][j];
+			cell.innerHTML = `${imageInfo.left + j}:${imageInfo.top + i} <span class="color">${img_color[i][j].substring(1)}</span>`;
+			cell.style.background = imageInfo.pixels[i][j];
 			if (j % 10 === 0) {
 				cell.classList.add('edge-left');
 			} else if ((j + 1) % 10 === 0) {
@@ -88,6 +85,34 @@ function construct_table(img_color) {
 		}
 		table.appendChild(row)
 	}
+}
+
+/* -------------- */
+/* Image selector */
+/* -------------- */
+
+function getImageInfo(image) {
+	return {
+		image: image,
+		top: image.dataset.top,
+		left: image.dataset.left,
+		pixels: []
+	};
+}
+
+function loadSourceImage(sourceImage) {
+	const imageInfo = getImageInfo(sourceImage);
+	imageToPixelTable(imageInfo);
+	constructTable(imageInfo);
+}
+
+function initImageSelector() {
+	const sourceImages = document.getElementsByClassName('source-image');
+	for(const img of sourceImages) {
+		img.addEventListener('click', function() { loadSourceImage(sourceImage); });
+	}
+	
+	loadSourceImage(sourceImages[0]);
 }
 
 /* ---------------- */
@@ -157,7 +182,9 @@ function minMaxRowCol() {
 	return [min_r, max_r, min_c, max_c];
 }
 
-function imageToPixelTable(img) {
+function imageToPixelTable(imageInfo) {
+	const img = imageInfo.image;
+	
 	/* Convert an <img> to a RGB pixel matrix */
 	const canvas = document.createElement('canvas');
 	canvas.style.display = 'none';
@@ -179,11 +206,11 @@ function imageToPixelTable(img) {
 		pixels.push(acc);
 	}
 	document.body.removeChild(canvas)
-	return pixels;
+	imageInfo.pixels = pixels;
 }
 
 /* ------------------ */
-/* Comaprison to flag */
+/* Comparison to flag */
 /* ------------------ */
 
 
@@ -260,6 +287,7 @@ function refreshPixels() {
 
 // We should wait until the image is loaded
 document.body.onload = function() {
+	initImageSelector();
 	var img = document.getElementById('sourceImg')
 	var pixels = imageToPixelTable(img)
 	construct_table(pixels);
