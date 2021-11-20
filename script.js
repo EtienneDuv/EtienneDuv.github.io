@@ -56,18 +56,17 @@ function copyToClipboard(e) {
 	displayCopiedMsg(e.x, e.y);
 }
 
-function constructTable(imageInfo) {
-	const minCol = parseInt(originCol.value), minRow = parseInt(originRow.value);
+function constructTable() {
 	var table = document.getElementById('image_table');
 	table.innerHTML = '';
 	var row = null, cell = null;
-	for (var i = 0; i < imageInfo.pixels.length; i++) {
+	for (var i = 0; i < sourceImageInfo.pixels.length; i++) {
 		row = document.createElement('tr')
-		for (var j = 0; j < imageInfo.pixels[i].length; j++) {
+		for (var j = 0; j < sourceImageInfo.pixels[i].length; j++) {
 			cell = document.createElement('td');
 
-			cell.innerHTML = `${imageInfo.left + j}:${imageInfo.top + i} <span class="color">${img_color[i][j].substring(1)}</span>`;
-			cell.style.background = imageInfo.pixels[i][j];
+			cell.innerHTML = `${sourceImageInfo.left + j}:${sourceImageInfo.top + i} <span class="color">${img_color[i][j].substring(1)}</span>`;
+			cell.style.background = sourceImageInfo.pixels[i][j];
 			if (j % 10 === 0) {
 				cell.classList.add('edge-left');
 			} else if ((j + 1) % 10 === 0) {
@@ -91,6 +90,7 @@ function constructTable(imageInfo) {
 /* Image selector */
 /* -------------- */
 
+let sourceImageInfo = undefined;
 function getImageInfo(image) {
 	return {
 		image: image,
@@ -101,9 +101,9 @@ function getImageInfo(image) {
 }
 
 function loadSourceImage(sourceImage) {
-	const imageInfo = getImageInfo(sourceImage);
-	imageToPixelTable(imageInfo);
-	constructTable(imageInfo);
+	sourceImageInfo = getImageInfo(sourceImage);
+	imageToPixelTable();
+	constructTable();
 }
 
 function initImageSelector() {
@@ -182,8 +182,8 @@ function minMaxRowCol() {
 	return [min_r, max_r, min_c, max_c];
 }
 
-function imageToPixelTable(imageInfo) {
-	const img = imageInfo.image;
+function imageToPixelTable() {
+	const img = sourceImageInfo.image;
 	
 	/* Convert an <img> to a RGB pixel matrix */
 	const canvas = document.createElement('canvas');
@@ -206,7 +206,7 @@ function imageToPixelTable(imageInfo) {
 		pixels.push(acc);
 	}
 	document.body.removeChild(canvas)
-	imageInfo.pixels = pixels;
+	sourceImageInfo.pixels = pixels;
 }
 
 /* ------------------ */
@@ -219,8 +219,8 @@ function processCell(cell, allPixels) {
 	Display it in emphase because it needs editing */
 	const row = getRow(cell);
 	const col = getCol(cell);
-	const x = parseInt(originCol.value) + col;
-	const y = parseInt(originRow.value) + row;
+	const x = sourceImageInfo.left + col;
+	const y = sourceImageInfo.top + row;
 	
 	const currentPixel = allPixels.find(px => px.x === x && px.y === y);
 	if(!currentPixel) {
@@ -288,7 +288,4 @@ function refreshPixels() {
 // We should wait until the image is loaded
 document.body.onload = function() {
 	initImageSelector();
-	var img = document.getElementById('sourceImg')
-	var pixels = imageToPixelTable(img)
-	construct_table(pixels);
 };
