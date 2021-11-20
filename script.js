@@ -94,8 +94,8 @@ let sourceImageInfo = undefined;
 function getImageInfo(image) {
 	return {
 		image: image,
-		top: image.dataset.top,
-		left: image.dataset.left,
+		top: parseInt(image.dataset.top),
+		left: parseInt(image.dataset.left),
 		pixels: []
 	};
 }
@@ -170,10 +170,9 @@ function minMaxRowCol() {
 	let col = parseInt(allCells[0].innerText.split(' ')[0].split(':')[1]);
 	var min_r = row, max_r = row;
 	var min_c = col, max_c = col;
-	var r, c;
 	for (var i = 1; i < allCells.length; i++) {
-		r = parseInt(allCells[i].innerText.split(' ')[0].split(':')[0]);;
-		c = parseInt(allCells[i].innerText.split(' ')[0].split(':')[1]);
+		const r = parseInt(allCells[i].innerText.split(' ')[0].split(':')[0]);;
+		const c = parseInt(allCells[i].innerText.split(' ')[0].split(':')[1]);
 		min_r = Math.min(r, min_r);
 		max_r = Math.max(r, max_r);
 		min_c = Math.min(c, min_c);
