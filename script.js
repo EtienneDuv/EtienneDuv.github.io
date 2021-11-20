@@ -109,7 +109,7 @@ function loadSourceImage(sourceImage) {
 function initImageSelector() {
 	const sourceImages = document.getElementsByClassName('source-image');
 	for(const img of sourceImages) {
-		img.addEventListener('click', function() { loadSourceImage(sourceImage); });
+		img.addEventListener('click', function() { loadSourceImage(img); });
 	}
 	
 	loadSourceImage(sourceImages[0]);
